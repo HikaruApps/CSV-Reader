@@ -1,3 +1,7 @@
+use std::fs;
+use std::env;
+use std::path::Path;
+use std::fs::File;
 use std::io::{self, Write};
 
 fn main() {
@@ -13,10 +17,38 @@ fn main() {
     let choice = choice.trim();
 
     match choice {
-        "add" => println!("You chose to create a new CSV file"),
+        "add" => add(),
         "edit" => println!("You chose to edit a CSV file"),
         "read" => println!("You chose to read a CSV file"),
         "remove" => println!("You chose to remove a CSV file"),
         _ => println!("Unknown choice."),
+    }
+}
+
+fn add() {
+
+    let folder = "./data";
+     fs::create_dir_all(folder).unwrap();
+        println!("Creating folder {}", folder);
+
+    let folder_path = "./data";
+
+
+    println!("Enter the name of the csv file");
+    let mut filename = String::new();
+    io::stdin().read_line(&mut filename).unwrap();
+    let filename = filename.trim();
+
+    let file_path = Path::new(folder_path).join(filename);
+
+    if filename.is_empty() {
+        println!("The file name cannot be empty");
+        return;
+    }
+
+    match File::create(file_path) {
+
+        Ok(_) => println!("Created file {}", filename),
+        Err(_) => println!("Could not create file {}", filename),
     }
 }
