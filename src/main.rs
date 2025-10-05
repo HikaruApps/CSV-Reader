@@ -27,12 +27,12 @@ fn main() {
 
 fn add() {
 
-    let folder = "./data";
-     fs::create_dir_all(folder).unwrap();
-        println!("Creating folder {}", folder);
+    let folder_path = Path::new("./data");
 
-    let folder_path = "./data";
-
+    if !folder_path.exists() {
+        fs::create_dir_all(folder_path).unwrap();
+        println!("Creating folder {}", folder_path.display());
+    }
 
     println!("Enter the name of the csv file");
     let mut filename = String::new();
