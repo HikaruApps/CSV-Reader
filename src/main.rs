@@ -1,6 +1,7 @@
 use std::fs;
 use std::env;
-use std::path::Path;
+use std::ffi::OsStr;
+use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::{self, Write};
 
@@ -37,18 +38,26 @@ fn add() {
     println!("Enter the name of the csv file");
     let mut filename = String::new();
     io::stdin().read_line(&mut filename).unwrap();
+
     let filename = filename.trim();
 
-    let file_path = Path::new(folder_path).join(filename);
+    let mut file_path = Path::new(folder_path).join(filename);
+
+    if file_path.extension() == None {
+        file_path.set_extension("csv");
+    }
 
     if filename.is_empty() {
         println!("The file name cannot be empty");
         return;
     }
 
-    match File::create(file_path) {
+    if !file_path.exists() {
+        match File::create(file_path) {
 
-        Ok(_) => println!("Created file {}", filename),
-        Err(_) => println!("Could not create file {}", filename),
-    }
+            Ok(_) => println!("Created file {}.csv", filename),
+            Err(_) => println!("Could not create file {}.csv", filename),
+        }
+    } else { println!("File {} already exists", filename) }
+
 }
