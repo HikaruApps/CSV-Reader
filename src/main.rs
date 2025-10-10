@@ -4,6 +4,8 @@ use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::{self, Write};
+use csv::Reader;
+use std::error::Error;
 
 fn main() {
     println!("Main menu:");
@@ -19,7 +21,7 @@ fn main() {
 
     match choice {
         "add" => add(),
-        "edit" => println!("You chose to edit a CSV file"),
+        "edit" => edit(),
         "read" => println!("You chose to read a CSV file"),
         "remove" => println!("You chose to remove a CSV file"),
         _ => println!("Unknown choice."),
@@ -41,7 +43,7 @@ fn add() {
 
     let filename = filename.trim();
 
-    let mut file_path = Path::new(folder_path).join(filename);
+    let mut file_path = folder_path.join(filename);
 
     if file_path.extension() == None {
         file_path.set_extension("csv");
@@ -53,11 +55,17 @@ fn add() {
     }
 
     if !file_path.exists() {
-        match File::create(file_path) {
+        match File::create(&file_path) {
 
-            Ok(_) => println!("Created file {}.csv", filename),
-            Err(_) => println!("Could not create file {}.csv", filename),
+            Ok(_) => println!("Created file {}.csv", file_path.display()),
+            Err(e) => println!("Could not create file {}.csv", e),
         }
     } else { println!("File {} already exists", filename) }
 
+}
+
+fn edit() {
+
+    let file = File::open("./data").unwrap();
+    let mut csv_reader = Reader::from_reader(file);
 }
